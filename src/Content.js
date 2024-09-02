@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-
+import { ThemeContext } from "./App";
+import { useContext } from "react";
+import "./App.css";
 function Content() {
   const tabs = ["posts", "comments", "albums"];
   const [type, setType] = useState("posts");
@@ -49,10 +51,14 @@ function Content() {
     const file = e.target.files[0];
     file.preview = URL.createObjectURL(file);
     setImage(file);
+    e.target.value = null;
+    console.log("123");
   };
 
+  const theme = useContext(ThemeContext);
+
   return (
-    <div>
+    <div className={theme}>
       <div
         style={{
           display: "flex",
