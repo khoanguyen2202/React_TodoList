@@ -1,11 +1,14 @@
-import React, { useEffect, useReducer, useRef } from "react";
+import React, { useContext, useEffect, useReducer, useRef } from "react";
 import reducer, { initialState } from "./reducer";
 import { setTask, addTask, deleteTask } from "./actions";
 import logger from "./logger";
+import { ThemeContext } from "../App";
 
 function TodoApp() {
   const [state, dispatch] = useReducer(logger(reducer), initialState);
   const { task, taskList } = state;
+  const inputRef = useRef();
+  const theme = useContext(ThemeContext);
   const handleAddTask = () => {
     if (task !== "") {
       dispatch(addTask(task));
@@ -17,10 +20,8 @@ function TodoApp() {
     localStorage.setItem("taskListVersion2", JSON.stringify(taskList));
   }, [taskList]);
 
-  const inputRef = useRef();
-
   return (
-    <div>
+    <div className={theme}>
       <div>Todo App Version 2</div>
       <input
         ref={inputRef}
@@ -37,7 +38,7 @@ function TodoApp() {
           {task}
           <span
             onClick={() => dispatch(deleteTask(index))}
-            style={{ marginLeft: "20px", fontSize: "20px" }}
+            style={{ marginLeft: "20px", fontSize: "20px", cursor: "pointer" }}
           >
             &times;
           </span>

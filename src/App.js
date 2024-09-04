@@ -4,12 +4,14 @@ import FakeChat from "./FakeChat";
 import Cart from "./Cart";
 // import TodoAppVer2 from "./TodoAppVer2";
 import TodoApp from "./Todo";
+import TodoAppVer3 from "./TodoAppVer3";
 
 const initialState = {
   toggle: false,
   toggle2: false,
   toggle3: false,
   toggle4: false,
+  toggle5: false,
 };
 
 const TOGGLE_TAB = "toggle_tab";
@@ -22,15 +24,22 @@ const setToggleTab = (payload) => {
 };
 
 const reducer = (state, action) => {
-  let newState;
+  let newState = { ...state };
   switch (action.type) {
     case TOGGLE_TAB:
-      newState = {
-        toggle: action.payload === "toggle" ? !state.toggle : false,
-        toggle2: action.payload === "toggle2" ? !state.toggle2 : false,
-        toggle3: action.payload === "toggle3" ? !state.toggle3 : false,
-        toggle4: action.payload === "toggle4" ? !state.toggle4 : false,
-      };
+      // newState = {
+      //   toggle: action.payload === "toggle" ? !state.toggle : false,
+      //   toggle2: action.payload === "toggle2" ? !state.toggle2 : false,
+      //   toggle3: action.payload === "toggle3" ? !state.toggle3 : false,
+      //   toggle4: action.payload === "toggle4" ? !state.toggle4 : false,
+      // };
+      for (const key in newState) {
+        if (key === action.payload) {
+          newState[key] = !state[key]; // Toggle the specific property
+        } else {
+          newState[key] = false; // Reset other properties to false
+        }
+      }
 
       break;
 
@@ -48,6 +57,10 @@ function App() {
     const storageTaskList = JSON.parse(localStorage.getItem("taskList"));
     return storageTaskList ?? [];
   });
+  const [width, setWidth] = useState(window.innerWidth);
+  const [height, setHeight] = useState(window.innerHeight);
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const [theme, setTheme] = useState("dark");
 
   const handleAddTask = () => {
     setTaskList((prev) => {
@@ -86,8 +99,7 @@ function App() {
   //     };
   //   });
   // };
-  const [width, setWidth] = useState(window.innerWidth);
-  const [height, setHeight] = useState(window.innerHeight);
+
   useEffect(() => {
     const handleResize = () => {
       setWidth(window.innerWidth);
@@ -99,8 +111,6 @@ function App() {
     };
   }, []);
 
-  const [state, dispatch] = useReducer(reducer, initialState);
-  const [theme, setTheme] = useState("dark");
   const toggleTheme = () => {
     setTheme(theme === "dark" ? "light" : "dark");
   };
@@ -152,6 +162,12 @@ function App() {
         >
           Toggle 4
         </button>
+        <button
+          onClick={() => dispatch(setToggleTab("toggle5"))}
+          style={{ marginRight: "30px" }}
+        >
+          Toggle 5
+        </button>
         {`Screen Width: ${width}`}
         <span style={{ marginLeft: "30px", marginRight: "30px" }}></span>
         {`Screen Height: ${height}`}
@@ -160,6 +176,7 @@ function App() {
         {state.toggle2 && <FakeChat />}
         {state.toggle3 && <Cart />}
         {state.toggle4 && <TodoApp />}
+        {state.toggle5 && <TodoAppVer3 />}
       </div>
     </ThemeContext.Provider>
   );
